@@ -23,16 +23,7 @@ type Product struct {
 	Quantity    int
 }
 
-// Simple Postgres example. Connection parameters can be provided via
-// environment variables (PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDB).
-// Defaults are provided for local testing.
 func main() {
-	// host := getenv("PGHOST", "localhost")
-	// port := getenv("PGPORT", "5432")
-	// user := getenv("PGUSER", "admin")
-	// password := getenv("PGPASSWORD", "admin")
-	// dbname := getenv("PGDB", "products")
-
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
@@ -77,10 +68,3 @@ func main() {
 	}
 	fmt.Println("Products:", products)
 }
-
-// func getenv(key, def string) string {
-// 	if v := os.Getenv(key); v != "" {
-// 		return v
-// 	}
-// 	return def
-// }
