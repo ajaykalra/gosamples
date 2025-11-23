@@ -57,7 +57,7 @@ func main() {
 	}
 	fmt.Printf("Postgres time: %s\n", now)
 
-	rows, err := db.Query("SELECT product_id , product_name FROM products")
+	rows, err := db.Query("SELECT product_id , product_name, price, stock_quantity FROM products")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,16 +66,16 @@ func main() {
 	var products []Product
 	for rows.Next() {
 		var product Product
-		if err := rows.Scan(&product.ID, &product.ProductName); err != nil {
+		if err := rows.Scan(&product.ID, &product.ProductName, &product.Price, &product.Quantity); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(product.ID, product.ProductName)
+		fmt.Println(product.ID, product.ProductName, product.Price, product.Quantity)
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Println("Products:", products)
 }
 
 // func getenv(key, def string) string {
