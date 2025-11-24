@@ -2,10 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
-
-	// "encoding/json"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -34,19 +33,24 @@ func main() {
 
 func productsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"message": "Hello, World!"}`)
+	//fmt.Fprintf(w, `{"message": "Hello, World!"}`)
 
-	// var products []Product
-	// var err error
-	// products, err = getProducts()
-	// fmt.Println("Products:", products, "error:", err)
+	var products []Product
+	var err error
+	products, err = getProducts()
+	if err != nil {
+		http.Error(w, "Failed to retrieve products", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(products)
+	w.WriteHeader(http.StatusOK)
 }
 
 func getProducts() ([]Product, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	// Use the connection string to open a DB handle.
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatalf("sql.Open: %v", err)
