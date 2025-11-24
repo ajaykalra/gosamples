@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 
+	// "encoding/json"
+	"net/http"
+
 	_ "github.com/lib/pq"
 )
 
@@ -24,54 +27,19 @@ type Product struct {
 }
 
 func main() {
-	// psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	host, port, user, password, dbname)
+	http.HandleFunc("/products", productsHandler)
+	fmt.Println("Server starting on port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
-	// // Use the connection string to open a DB handle.
-	// db, err := sql.Open("postgres", psqlInfo)
-	// if err != nil {
-	// 	log.Fatalf("sql.Open: %v", err)
-	// }
-	// defer db.Close()
-
-	// // Verify connection with Ping.
-	// if err := db.Ping(); err != nil {
-	// 	log.Fatalf("db.Ping: %v", err)
-	// }
-
-	// fmt.Println("Connected to Postgres")
-
-	// // Simple query to demonstrate use of the DB handle.
-	// var now string
-	// if err := db.QueryRow("SELECT NOW()::text").Scan(&now); err != nil {
-	// 	log.Fatalf("query NOW(): %v", err)
-	// }
-	// fmt.Printf("Postgres time: %s\n", now)
-
-	// rows, err := db.Query("SELECT product_id , product_name, price, stock_quantity FROM products")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// defer rows.Close()
+func productsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{"message": "Hello, World!"}`)
 
 	// var products []Product
-	// for rows.Next() {
-	// 	var product Product
-	// 	if err := rows.Scan(&product.ID, &product.ProductName, &product.Price, &product.Quantity); err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	fmt.Println(product.ID, product.ProductName, product.Price, product.Quantity)
-	// 	products = append(products, product)
-	// }
-	// if err := rows.Err(); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println("Products:", products)
-
-	var products []Product
-	var err error
-	products, err = getProducts()
-	fmt.Println("Products:", products, "error:", err)
+	// var err error
+	// products, err = getProducts()
+	// fmt.Println("Products:", products, "error:", err)
 }
 
 func getProducts() ([]Product, error) {
@@ -93,14 +61,6 @@ func getProducts() ([]Product, error) {
 	}
 
 	fmt.Println("Connected to Postgres")
-
-	// Simple query to demonstrate use of the DB handle.
-	var now string
-	if err := db.QueryRow("SELECT NOW()::text").Scan(&now); err != nil {
-		log.Fatalf("query NOW(): %v", err)
-		return nil, err
-	}
-	fmt.Printf("Postgres time: %s\n", now)
 
 	rows, err := db.Query("SELECT product_id , product_name, price, stock_quantity FROM products")
 	if err != nil {
